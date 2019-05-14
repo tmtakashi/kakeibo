@@ -1,4 +1,5 @@
 $(function () {
+    // 追加
     $('#add').on('click', function () {
         var form = document.getElementById('form');
         if (!form.checkValidity()) {
@@ -15,6 +16,21 @@ $(function () {
             type: 'POST',
             data: data,
             dataType: 'json'
-        })
+        });
     });
+
+    // 削除
+    $('.delete').on('click', function () {
+        var self = $(this);
+        $.ajax({
+            url: 'main/delete_item/',
+            type: 'POST',
+            data: {
+                pk: self.data('number')
+            },
+            dataType: 'json'
+        }).done(response => {
+            self.parent().parent().remove();
+        });
+    })
 });

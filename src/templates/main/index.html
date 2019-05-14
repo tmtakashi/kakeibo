@@ -50,14 +50,15 @@
             </div>
         </div>
     </form>
-    <table class="uk-table uk-table-hover uk-table-divider">
-        <caption>今月の収支</caption>
+    <table class="uk-table uk-table-divider">
+        <caption class="uk-margin-bottom">今月の収支</caption>
         <thead>
             <tr>
                 <th>日付</th>
                 <th>項目名</th>
                 <th>収入・支出</th>
                 <th>金額（円）</th>
+                <th></th>
             </tr>
             </thead>
             <tbody id='table'>
@@ -67,6 +68,7 @@
                     <td>{{ item.name }}</td>
                     <td>{{ item.inout }}</td>
                     <td>{{ item.amount }}</td>
+                    <td><button class="uk-button uk-button-danger delete" data-number="{{ item.pk }}">削除</button></td>
                 </tr>
                 {% endfor %}
             </tbody>

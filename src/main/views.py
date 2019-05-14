@@ -17,7 +17,6 @@ def add_item(request):
     inout = request.POST.get('inout')
     name = request.POST.get('itemName')
     amount = request.POST.get('amount')
-    print(date, inout, name, amount)
     item = Item.objects.create(
         date=date,
         inout=inout,
@@ -31,3 +30,11 @@ def add_item(request):
         'name': name,
         'amount': amount
     })
+
+
+@require_POST
+def delete_item(request):
+    pk = request.POST.get('pk')
+    Item.objects.get(pk=pk).delete()
+
+    return JsonResponse({})
