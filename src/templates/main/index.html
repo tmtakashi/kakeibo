@@ -24,6 +24,7 @@
 </nav>
 <div class="uk-container">
     <form id='form'>
+        {% csrf_token %}
         <div class="uk-grid-small" uk-grid>
             <div class="uk-width-1-5@s">
                 <label for="date">日付</label>
@@ -49,7 +50,7 @@
             </div>
         </div>
     </form>
-    <table class="uk-table uk-table-hover">
+    <table class="uk-table uk-table-hover uk-table-divider">
         <caption>今月の収支</caption>
         <thead>
             <tr>
@@ -60,6 +61,14 @@
             </tr>
             </thead>
             <tbody id='table'>
+                {% for item in item_list %}
+                <tr>
+                    <td>{{ item.date }}</td>
+                    <td>{{ item.name }}</td>
+                    <td>{{ item.inout }}</td>
+                    <td>{{ item.amount }}</td>
+                </tr>
+                {% endfor %}
             </tbody>
     </table>
 </div>
@@ -68,6 +77,36 @@
 {% block extrajs %}
 <script>
     $(".date").flatpickr();
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    var csrftoken = getCookie('csrftoken');
+
+    function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+
+    $.ajaxSetup({
+        beforeSend: function (xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+    });
 </script>
 <script src="{% static 'main/js/kakeibo.js' %}"></script>
 {% endblock %}
