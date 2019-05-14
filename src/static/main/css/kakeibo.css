@@ -1,0 +1,8 @@
+.button-wrap {
+    position: relative;
+}
+
+.button-wrap button {
+    position: absolute;
+    bottom: 0;
+}

@@ -1,0 +1,73 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}
+<title>Kakeibo</title>
+{% endblock %}
+
+{% block content %}
+<link href="{% static 'main/css/kakeibo.css' %}" rel="stylesheet"></link>
+<nav class="uk-navbar-container uk-margin-bottom" uk-navbar>
+    <div class="uk-navbar-left">
+        <a class="uk-navbar-item uk-logo" href="#">Kakeibo</a>
+    </div>
+    <div class="uk-navbar-right">
+        <ul class="uk-navbar-nav">
+            <li>
+                <a href="#">
+                    <span class="uk-icon uk-margin-small-right" uk-icon="sign-in"></span>
+                    ログイン
+                </a>
+            </li>
+        </ul>
+    </div>
+</nav>
+<div class="uk-container">
+    <form id='form'>
+        <div class="uk-grid-small" uk-grid>
+            <div class="uk-width-1-5@s">
+                <label for="date">日付</label>
+                <input class="uk-input date" type="text" id="date" required>
+            </div>
+            <div class="uk-width-1-5@s">
+                <label for="item-name">項目名</label>
+                <input class="uk-input" type="text" id="item-name" required>
+            </div>
+            <div class="uk-width-1-5@s">
+                <label for="inout">収入・支出</label>
+                <select class="uk-select" id="inout">
+                    <option>収入</option>
+                    <option>支出</option>
+                </select>
+            </div>
+            <div class="uk-width-1-5@s">
+                <label for="amount">金額（円）</label>
+                <input class="uk-input" type="number" id="amount" pattern="[1-9][0-9]*" required>
+            </div>
+            <div class="uk-width-1-5@s button-wrap">
+                <button class="uk-button uk-button-primary" id="add" type='submit'>追加</button>
+            </div>
+        </div>
+    </form>
+    <table class="uk-table uk-table-hover">
+        <caption>今月の収支</caption>
+        <thead>
+            <tr>
+                <th>日付</th>
+                <th>項目名</th>
+                <th>収入・支出</th>
+                <th>金額（円）</th>
+            </tr>
+            </thead>
+            <tbody id='table'>
+            </tbody>
+    </table>
+</div>
+{% endblock %}
+
+{% block extrajs %}
+<script>
+    $(".date").flatpickr();
+</script>
+<script src="{% static 'main/js/kakeibo.js' %}"></script>
+{% endblock %}
