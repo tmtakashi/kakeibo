@@ -1,4 +1,5 @@
 $(function () {
+    updateSum();
     // 追加
     $('#add').on('click', function () {
         var form = document.getElementById('form');
@@ -16,6 +17,8 @@ $(function () {
             type: 'POST',
             data: data,
             dataType: 'json'
+        }).done(data => {
+            updateSum();
         });
     });
 
@@ -31,6 +34,24 @@ $(function () {
             dataType: 'json'
         }).done(response => {
             self.parent().parent().remove();
+            updateSum();
         });
     })
+
 });
+function updateSum() {
+    var outSum = $('#out-sum');
+    var inSum = $('#in-sum');
+
+    var inTot = 0;
+    $('.in-amount').each(function (_, amount) {
+        inTot += Number($(amount).text())
+    });
+    var outTot = 0;
+    $('.out-amount').each(function (_, amount) {
+        outTot += Number($(amount).text())
+    });
+    console.log(inTot);
+    $(inSum).text(inTot);
+    $(outSum).text(outTot);
+};

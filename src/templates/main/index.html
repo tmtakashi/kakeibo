@@ -67,7 +67,7 @@
                         <tr>
                             <td>{{ item.date }}</td>
                             <td>{{ item.name }}</td>
-                            <td>{{ item.amount }}</td>
+                            <td class='in-amount'>{{ item.amount }}</td>
                             <td><button class="uk-button uk-button-danger delete" data-number="{{ item.pk }}">削除</button></td>
                         </tr>
                     {% endif %}
@@ -76,7 +76,7 @@
                 <tfoot>
                     <td></td>
                     <td>合計</td>
-                    <td>{{ in_tot }}</td>
+                    <td id="in-sum">{{ in_tot }}</td>
                     <td></td>
                 </tfoot>
         </table>
@@ -96,7 +96,7 @@
                         <tr>
                             <td>{{ item.date }}</td>
                             <td>{{ item.name }}</td>
-                            <td>{{ item.amount }}</td>
+                            <td class="out-amount">{{ item.amount }}</td>
                             <td><button class="uk-button uk-button-danger delete" data-number="{{ item.pk }}">削除</button></td>
                         </tr>
                     {% endif %}
@@ -105,10 +105,13 @@
                 <tfoot>
                     <td></td>
                     <td>合計</td>
-                    <td>{{ out_tot }}</td>
+                    <td id="out-sum"></td>
                     <td></td>
                 </tfoot>
         </table>
+    </div>
+    <div class="uk-margin-auto" style="width:600px;">
+        <canvas id="chart"></canvas>
     </div>
 </div>
 {% endblock %}
@@ -148,4 +151,5 @@
     });
 </script>
 <script src="{% static 'main/js/kakeibo.js' %}"></script>
+<script src="{% static 'main/js/graph.js' %}"></script>
 {% endblock %}

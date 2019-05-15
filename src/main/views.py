@@ -1,7 +1,9 @@
+from datetime import datetime, timedelta
+
 from django.shortcuts import render
 from django.views.generic import ListView
 from django.http import JsonResponse
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_POST, require_GET
 
 from .models import Item
 
@@ -9,15 +11,6 @@ from .models import Item
 class HomePageView(ListView):
     template_name = "main/index.html"
     queryset = Item.objects.all().order_by('-date').order_by('-created_at')
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['in_tot'] = sum(
-            [item.amount for item in Item.objects.filter(inout="収入")])
-        context['out_tot'] = sum(
-            [item.amount for item in Item.objects.filter(inout="支出")])
-
-        return context
 
 
 @require_POST
@@ -47,3 +40,35 @@ def delete_item(request):
     Item.objects.get(pk=pk).delete()
 
     return JsonResponse({})
+
+
+@require_GET
+def data_for_graph(request):
+    labels = [(datetime.now()-timedelta(i)).strftime("%Y/%m/%d")
+              for i in reversed(range(7))]
+    in_data = [Item.objects.filter(
+        date=datetime.now() - timedelta(i), inout='収入') for i in reversed(range(7))]
+    out_data = [Item.objects.filter(
+        date=datetime.now() - timedelta(i), inout='支出') for i in reversed(range(7))]
+    # それぞれの日の和を取る
+    in_data_sum = get_day_sum(in_data)
+    out_data_sum = get_day_sum(out_data)
+
+    return JsonResponse({
+        'inDataSum': in_data_sum,
+        'outDataSum': out_data_sum,
+        'labels': labels
+    })
+
+
+def get_day_sum(queryset_list):
+    sum_list = []
+    for queryset in queryset_list:
+        total = 0
+        for item in queryset:
+            if item is None:
+                total += 0
+            else:
+                total += item.amount
+        sum_list.append(total)
+    return sum_list
