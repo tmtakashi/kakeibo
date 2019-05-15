@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, date, timedelta
 
 from django.shortcuts import render
 from django.views.generic import ListView
@@ -42,14 +42,23 @@ def delete_item(request):
     return JsonResponse({})
 
 
+@require_POST
+def change_month(request):
+    month = request.POST.get('month')
+    print(month)
+    return JsonResponse({})
+
+
 @require_GET
 def data_for_graph(request):
-    labels = [(datetime.now()-timedelta(i)).strftime("%Y/%m/%d")
-              for i in reversed(range(7))]
+    start_date = datetime.today().replace(day=1)
+    end_date = datetime.today().replace(day=31)
+    labels = [single_date.strftime("%Y-%m-%d")
+              for single_date in daterange(start_date, end_date)]
     in_data = [Item.objects.filter(
-        date=datetime.now() - timedelta(i), inout='収入') for i in reversed(range(7))]
+        date=single_date, inout='収入') for single_date in daterange(start_date, end_date)]
     out_data = [Item.objects.filter(
-        date=datetime.now() - timedelta(i), inout='支出') for i in reversed(range(7))]
+        date=single_date, inout='支出') for single_date in daterange(start_date, end_date)]
     # それぞれの日の和を取る
     in_data_sum = get_day_sum(in_data)
     out_data_sum = get_day_sum(out_data)
@@ -72,3 +81,10 @@ def get_day_sum(queryset_list):
                 total += item.amount
         sum_list.append(total)
     return sum_list
+
+# https://stackoverflow.com/questions/1060279/iterating-through-a-range-of-dates-in-python
+
+
+def daterange(start_date, end_date):
+    for n in range(int((end_date - start_date).days)):
+        yield start_date + timedelta(n)

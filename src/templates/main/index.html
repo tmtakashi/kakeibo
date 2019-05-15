@@ -23,35 +23,50 @@
     </div>
 </nav>
 <div class="uk-container">
-    <form id='form'>
-        {% csrf_token %}
-        <div class="uk-grid-small" uk-grid>
-            <div class="uk-width-1-5@s">
-                <label for="date">日付</label>
-                <input class="uk-input date" type="text" id="date" required>
-            </div>
-            <div class="uk-width-1-5@s">
-                <label for="item-name">項目名</label>
-                <input class="uk-input" type="text" id="item-name" required>
-            </div>
-            <div class="uk-width-1-5@s">
-                <label for="inout">収入・支出</label>
-                <select class="uk-select" id="inout">
-                    <option>支出</option>
-                    <option>収入</option>
-                </select>
-            </div>
-            <div class="uk-width-1-5@s">
-                <label for="amount">金額（円）</label>
-                <input class="uk-input" type="number" id="amount" pattern="[1-9][0-9]*" required>
-            </div>
-            <div class="uk-width-1-5@s button-wrap">
-                <button class="uk-button uk-button-primary" id="add" type='submit'>追加</button>
-            </div>
+    <div class="uk-width-1-5@s" style='display: inline-block;'>
+        <input class="uk-input" type="month" id="select-month">
+    </div>
+    <span>の収支</span>
+    <div class="uk-margin-top uk-margin-auto" style="width:700px;">
+        <canvas id="chart"></canvas>
+    </div>
+    <div class="uk-text-right">
+        <button class="uk-button uk-button-primary uk-margin-small-right" type="button" uk-toggle="target: #add-item-modal">項目を追加</button>
+    </div>
+    <div id="add-item-modal" uk-modal>
+        <div class="uk-modal-dialog uk-modal-body">
+            <form id='form'>
+                {% csrf_token %}
+                <div class="uk-grid-small" uk-grid>
+                    <div class="uk-width-1-4@s">
+                        <label for="date">日付</label>
+                        <input class="uk-input date" type="text" id="date" required>
+                    </div>
+                    <div class="uk-width-1-4@s">
+                        <label for="item-name">項目名</label>
+                        <input class="uk-input" type="text" id="item-name" required>
+                    </div>
+                    <div class="uk-width-1-4@s">
+                        <label for="inout">収入・支出</label>
+                        <select class="uk-select" id="inout">
+                            <option>支出</option>
+                            <option>収入</option>
+                        </select>
+                    </div>
+                    <div class="uk-width-1-4@s">
+                        <label for="amount">金額（円）</label>
+                        <input class="uk-input" type="number" id="amount" pattern="[1-9][0-9]*" required>
+                    </div>
+                </div>
+                <div class="uk-text-right">
+                    <button class="uk-button uk-button-default uk-modal-close uk-margin-top" type="button">キャンセル</button>
+                    <button class="uk-button uk-button-primary uk-margin-top" id="add" type='submit'>追加</button>
+                </div>
+            </form>
         </div>
-    </form>
-    <div class="uk-grid-small uk-margin-top" uk-grid>
-        <table class="uk-table uk-table-divider uk-table-justify uk-width-1-2">
+    </div>
+        <div class="uk-grid-small uk-margin-top" uk-grid>
+            <table class="uk-table uk-table-divider uk-table-justify uk-width-1-2" id='inTable'>
             <caption class="uk-margin-bottom">今月の収入</caption>
             <thead>
                 <tr>
@@ -80,7 +95,7 @@
                     <td></td>
                 </tfoot>
         </table>
-        <table class="uk-table uk-table-divider uk-table-justify uk-width-1-2">
+        <table class="uk-table uk-table-divider uk-table-justify uk-width-1-2" id='outTable'>
             <caption class="uk-margin-bottom">今月の支出</caption>
             <thead>
                 <tr>
@@ -109,9 +124,6 @@
                     <td></td>
                 </tfoot>
         </table>
-    </div>
-    <div class="uk-margin-auto" style="width:600px;">
-        <canvas id="chart"></canvas>
     </div>
 </div>
 {% endblock %}

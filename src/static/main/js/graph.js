@@ -15,7 +15,15 @@ $(function () {
                     gridLines: {
                         offsetGridLines: true
                     }
-                }]
+                }],
+                yAxes: [
+                    {
+                      ticks: {
+                        beginAtZero: true,
+                        min: 0,
+                      }
+                    }
+                  ]
             }
         };
         var myChart = new Chart(ctx, {
