@@ -37,8 +37,8 @@
             <div class="uk-width-1-5@s">
                 <label for="inout">収入・支出</label>
                 <select class="uk-select" id="inout">
-                    <option>収入</option>
                     <option>支出</option>
+                    <option>収入</option>
                 </select>
             </div>
             <div class="uk-width-1-5@s">
@@ -50,29 +50,66 @@
             </div>
         </div>
     </form>
-    <table class="uk-table uk-table-divider">
-        <caption class="uk-margin-bottom">今月の収支</caption>
-        <thead>
-            <tr>
-                <th>日付</th>
-                <th>項目名</th>
-                <th>収入・支出</th>
-                <th>金額（円）</th>
-                <th></th>
-            </tr>
-            </thead>
-            <tbody id='table'>
-                {% for item in item_list %}
+    <div class="uk-grid-small uk-margin-top" uk-grid>
+        <table class="uk-table uk-table-divider uk-table-justify uk-width-1-2">
+            <caption class="uk-margin-bottom">今月の収入</caption>
+            <thead>
                 <tr>
-                    <td>{{ item.date }}</td>
-                    <td>{{ item.name }}</td>
-                    <td>{{ item.inout }}</td>
-                    <td>{{ item.amount }}</td>
-                    <td><button class="uk-button uk-button-danger delete" data-number="{{ item.pk }}">削除</button></td>
+                    <th>日付</th>
+                    <th>項目名</th>
+                    <th>金額（円）</th>
+                    <th></th>
                 </tr>
-                {% endfor %}
-            </tbody>
-    </table>
+                </thead>
+                <tbody id='table'>
+                    {% for item in item_list %}
+                    {% if item.inout == '収入' %}
+                        <tr>
+                            <td>{{ item.date }}</td>
+                            <td>{{ item.name }}</td>
+                            <td>{{ item.amount }}</td>
+                            <td><button class="uk-button uk-button-danger delete" data-number="{{ item.pk }}">削除</button></td>
+                        </tr>
+                    {% endif %}
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <td></td>
+                    <td>合計</td>
+                    <td>{{ in_tot }}</td>
+                    <td></td>
+                </tfoot>
+        </table>
+        <table class="uk-table uk-table-divider uk-table-justify uk-width-1-2">
+            <caption class="uk-margin-bottom">今月の支出</caption>
+            <thead>
+                <tr>
+                    <th>日付</th>
+                    <th>項目名</th>
+                    <th>金額（円）</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody id='table'>
+                    {% for item in item_list %}
+                    {% if item.inout == '支出' %}
+                        <tr>
+                            <td>{{ item.date }}</td>
+                            <td>{{ item.name }}</td>
+                            <td>{{ item.amount }}</td>
+                            <td><button class="uk-button uk-button-danger delete" data-number="{{ item.pk }}">削除</button></td>
+                        </tr>
+                    {% endif %}
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <td></td>
+                    <td>合計</td>
+                    <td>{{ out_tot }}</td>
+                    <td></td>
+                </tfoot>
+        </table>
+    </div>
 </div>
 {% endblock %}
 

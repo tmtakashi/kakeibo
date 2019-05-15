@@ -10,6 +10,15 @@ class HomePageView(ListView):
     template_name = "main/index.html"
     queryset = Item.objects.all().order_by('-date').order_by('-created_at')
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['in_tot'] = sum(
+            [item.amount for item in Item.objects.filter(inout="収入")])
+        context['out_tot'] = sum(
+            [item.amount for item in Item.objects.filter(inout="支出")])
+
+        return context
+
 
 @require_POST
 def add_item(request):
