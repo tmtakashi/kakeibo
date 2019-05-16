@@ -39,7 +39,7 @@ $(function () {
     });
 
     // 削除
-    $('.delete').on('click', function () {
+    $(document).on('click', '.delete', function () {
         var self = $(this);
         $.ajax({
             url: 'main/delete_item/',

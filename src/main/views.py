@@ -15,6 +15,7 @@ class ItemMapper(Mapper):
     inout = RawField('inout')
     name = RawField('name')
     amount = RawField('amount')
+    pk = RawField('pk')
 
 
 class HomePageView(ListView):
@@ -100,10 +101,3 @@ def get_day_sum(queryset_list):
                 total += item.amount
         sum_list.append(total)
     return sum_list
-
-# https://stackoverflow.com/questions/1060279/iterating-through-a-range-of-dates-in-python
-
-
-def daterange(start_date, end_date):
-    for n in range(int((end_date - start_date).days)):
-        yield start_date + timedelta(n)
