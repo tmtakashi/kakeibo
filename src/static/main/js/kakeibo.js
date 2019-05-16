@@ -2,28 +2,18 @@ $(function () {
     // 月の初期値を現在に設定
     var date = new Date()
     var y = date.getFullYear();
-    var m = ("00" + (date.getMonth()+1)).slice(-2);
-    $('#select-month').val(y + '-' + m);
-    // 合計算出
-    updateSum();
-
+    var m = ("00" + (date.getMonth() + 1)).slice(-2);
+    var ym = y + '-' + m
+    $('#select-month').val(ym);
+    // 今月のデータ表示
+    updateTable(ym);
+    updateGraph(ym);
 
     // 月変更
     $('#select-month').on('change', function () {
         var self = $(this);
-        $.ajax({
-            url: 'main/change_month/',
-            data: {
-                month: self.val()
-            },
-            type: 'POST',
-            dataType: 'JSON'
-        }).done(data => {
-            var inTable = $('#inTable');
-            var outTable = $('#outTable');
-            updateTable(data.inItems, inTable);
-            updateTable(data.outItems, outTable);
-        });
+        updateTable(self.val());
+        updateGraph(self.val());
     });
 
     // 追加
@@ -65,18 +55,40 @@ $(function () {
     })
 
 });
-function updateTable(items, table) {
+
+function updateTable(month) {
+    $.ajax({
+        url: 'main/change_month/',
+        data: {
+            month: month
+        },
+        type: 'POST',
+        dataType: 'JSON'
+    }).done(data => {
+        var inTable = $('#inTable');
+        var outTable = $('#outTable');
+        _updateTable(data.inItems, inTable);
+        _updateTable(data.outItems, outTable);
+        updateSum();
+    });
+}
+
+function _updateTable(items, table) {
     var tbody = $(table).find('tbody').empty()
-    items.each(function (_, item) {
+    var amountAttr;
+    if ($(table).attr('id') == 'inTable') {
+        amountAttr = 'in-amount';
+    } else if ($(table).attr('id') == 'outTable') {
+        amountAttr = 'out-amount'
+    };
+    $(items).each(function (_, item) {
         $(tbody).append(
-            '<td>' +
-                '< tr >' +
-                    `<td>${item.date}</td>` +
-                    `<td>${item.name}</td>` +
-                    `<td class='in-amount'>${item.amount}</td>` +
-                    `<td><button class="uk-button uk-button-danger delete" data-number="${item.pk}">削除</button></td>` +
-                '</tr>' +
-            '</td>')
+            '<tr>' +
+            `<td>${item.date}</td>` +
+            `<td>${item.name}</td>` +
+            `<td class='${amountAttr}'>${item.amount}</td>` +
+            `<td><button class="uk-button uk-button-danger delete" data-number="${item.pk}">削除</button></td>` +
+            '</tr>');
     })
 };
         
@@ -92,7 +104,57 @@ function updateSum() {
     $('.out-amount').each(function (_, amount) {
         outTot += Number($(amount).text())
     });
-    console.log(inTot);
     $(inSum).text(inTot);
     $(outSum).text(outTot);
 };
+
+function updateGraph(month) {
+    $.ajax({
+        url: 'main/data_for_graph/',
+        type: 'POST',
+        data: {
+          month: month  
+        },
+        dataType: 'json'
+    }).done(data => {
+        var ctx = document.getElementById("chart").getContext('2d');
+        options = {
+            scales: {
+                xAxes: [{
+                    barPercentage: 0.5,
+                    barThickness: 6,
+                    maxBarThickness: 8,
+                    minBarLength: 2,
+                    gridLines: {
+                        offsetGridLines: true
+                    }
+                }],
+                yAxes: [
+                    {
+                      ticks: {
+                        beginAtZero: true,
+                        min: 0,
+                      }
+                    }
+                  ]
+            }
+        };
+        var myChart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: data.labels,
+            datasets: [{
+                label: '収入',
+                backgroundColor: 'rgba(66, 212, 244, 0.5)',
+                data: data.inDataSum
+            },
+            {
+                label: '支出',
+                backgroundColor: 'rgba(239, 38, 71, 0.5)',
+                data: data.outDataSum
+            }]
+            },
+            options: options
+        });
+    });
+}

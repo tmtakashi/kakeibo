@@ -1,11 +1,20 @@
 from datetime import datetime, date, timedelta
-
+import calendar
 from django.shortcuts import render
 from django.views.generic import ListView
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST, require_GET
 
+from bpmappers import Mapper, RawField
+
 from .models import Item
+
+
+class ItemMapper(Mapper):
+    date = RawField('date')
+    inout = RawField('inout')
+    name = RawField('name')
+    amount = RawField('amount')
 
 
 class HomePageView(ListView):
@@ -44,21 +53,31 @@ def delete_item(request):
 
 @require_POST
 def change_month(request):
-    month = request.POST.get('month')
-    print(month)
-    return JsonResponse({})
+    year, month = request.POST.get('month').split('-')
+    in_items = Item.objects.filter(date__year=year,
+                                   date__month=month, inout='収入').order_by('-date').order_by('-created_at')
+    out_items = Item.objects.filter(date__year=year,
+                                    date__month=month, inout='支出').order_by('-date').order_by('-created_at')
+    in_items_dict = [ItemMapper(item).as_dict() for item in in_items]
+    out_items_dict = [ItemMapper(item).as_dict() for item in out_items]
+
+    return JsonResponse({
+        'inItems': in_items_dict,
+        'outItems': out_items_dict
+    })
 
 
-@require_GET
+@require_POST
 def data_for_graph(request):
-    start_date = datetime.today().replace(day=1)
-    end_date = datetime.today().replace(day=31)
-    labels = [single_date.strftime("%Y-%m-%d")
-              for single_date in daterange(start_date, end_date)]
+    year, month = map(lambda x: int(x), request.POST.get('month').split('-'))
+    num_days = calendar.monthrange(year, month)[1]
+    days = [date(year, month, day) for day in range(1, num_days+1)]
+    labels = [day.strftime("%Y-%m-%d")
+              for day in days]
     in_data = [Item.objects.filter(
-        date=single_date, inout='収入') for single_date in daterange(start_date, end_date)]
+        date=day, inout='収入') for day in days]
     out_data = [Item.objects.filter(
-        date=single_date, inout='支出') for single_date in daterange(start_date, end_date)]
+        date=day, inout='支出') for day in days]
     # それぞれの日の和を取る
     in_data_sum = get_day_sum(in_data)
     out_data_sum = get_day_sum(out_data)

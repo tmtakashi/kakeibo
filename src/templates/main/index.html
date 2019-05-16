@@ -23,47 +23,41 @@
     </div>
 </nav>
 <div class="uk-container">
-    <div class="uk-width-1-5@s" style='display: inline-block;'>
+    <div class="uk-width-1-6@s" style='display: inline-block;'>
         <input class="uk-input" type="month" id="select-month">
     </div>
     <span>の収支</span>
     <div class="uk-margin-top uk-margin-auto" style="width:700px;">
         <canvas id="chart"></canvas>
     </div>
-    <div class="uk-text-right">
-        <button class="uk-button uk-button-primary uk-margin-small-right" type="button" uk-toggle="target: #add-item-modal">項目を追加</button>
-    </div>
-    <div id="add-item-modal" uk-modal>
-        <div class="uk-modal-dialog uk-modal-body">
-            <form id='form'>
-                {% csrf_token %}
-                <div class="uk-grid-small" uk-grid>
-                    <div class="uk-width-1-4@s">
-                        <label for="date">日付</label>
-                        <input class="uk-input date" type="text" id="date" required>
-                    </div>
-                    <div class="uk-width-1-4@s">
-                        <label for="item-name">項目名</label>
-                        <input class="uk-input" type="text" id="item-name" required>
-                    </div>
-                    <div class="uk-width-1-4@s">
-                        <label for="inout">収入・支出</label>
-                        <select class="uk-select" id="inout">
-                            <option>支出</option>
-                            <option>収入</option>
-                        </select>
-                    </div>
-                    <div class="uk-width-1-4@s">
-                        <label for="amount">金額（円）</label>
-                        <input class="uk-input" type="number" id="amount" pattern="[1-9][0-9]*" required>
-                    </div>
+    <div id="add-item">
+        <form id='form'>
+            {% csrf_token %}
+            <div class="uk-grid-small" uk-grid>
+                <div class="uk-width-1-5@s">
+                    <label for="date">日付</label>
+                    <input class="uk-input date" type="text" id="date" required>
                 </div>
-                <div class="uk-text-right">
-                    <button class="uk-button uk-button-default uk-modal-close uk-margin-top" type="button">キャンセル</button>
+                <div class="uk-width-1-5@s">
+                    <label for="item-name">項目名</label>
+                    <input class="uk-input" type="text" id="item-name" required>
+                </div>
+                <div class="uk-width-1-5@s">
+                    <label for="inout">収入・支出</label>
+                    <select class="uk-select" id="inout">
+                        <option>支出</option>
+                        <option>収入</option>
+                    </select>
+                </div>
+                <div class="uk-width-1-5@s">
+                    <label for="amount">金額（円）</label>
+                    <input class="uk-input" type="number" id="amount" pattern="[1-9][0-9]*" required>
+                </div>
+                <div class="uk-width-1-5@s">
                     <button class="uk-button uk-button-primary uk-margin-top" id="add" type='submit'>追加</button>
                 </div>
-            </form>
-        </div>
+            </div>
+        </form>
     </div>
         <div class="uk-grid-small uk-margin-top" uk-grid>
             <table class="uk-table uk-table-divider uk-table-justify uk-width-1-2" id='inTable'>
@@ -76,17 +70,7 @@
                     <th></th>
                 </tr>
                 </thead>
-                <tbody id='table'>
-                    {% for item in item_list %}
-                    {% if item.inout == '収入' %}
-                        <tr>
-                            <td>{{ item.date }}</td>
-                            <td>{{ item.name }}</td>
-                            <td class='in-amount'>{{ item.amount }}</td>
-                            <td><button class="uk-button uk-button-danger delete" data-number="{{ item.pk }}">削除</button></td>
-                        </tr>
-                    {% endif %}
-                    {% endfor %}
+                <tbody>
                 </tbody>
                 <tfoot>
                     <td></td>
@@ -105,17 +89,7 @@
                     <th></th>
                 </tr>
                 </thead>
-                <tbody id='table'>
-                    {% for item in item_list %}
-                    {% if item.inout == '支出' %}
-                        <tr>
-                            <td>{{ item.date }}</td>
-                            <td>{{ item.name }}</td>
-                            <td class="out-amount">{{ item.amount }}</td>
-                            <td><button class="uk-button uk-button-danger delete" data-number="{{ item.pk }}">削除</button></td>
-                        </tr>
-                    {% endif %}
-                    {% endfor %}
+                <tbody>
                 </tbody>
                 <tfoot>
                     <td></td>
@@ -163,5 +137,4 @@
     });
 </script>
 <script src="{% static 'main/js/kakeibo.js' %}"></script>
-<script src="{% static 'main/js/graph.js' %}"></script>
 {% endblock %}
