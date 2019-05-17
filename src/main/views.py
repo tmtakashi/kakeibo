@@ -1,6 +1,6 @@
 from datetime import datetime, date, timedelta
 import calendar
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.views.generic import ListView
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST, require_GET
@@ -47,7 +47,21 @@ def add_item(request):
 @require_POST
 def delete_item(request):
     pk = request.POST.get('pk')
-    Item.objects.get(pk=pk).delete()
+    item = get_object_or_404(Item, pk=pk)
+    item.delete()
+
+    return JsonResponse({})
+
+
+@require_POST
+def edit_item(request):
+    pk = request.POST.get('pk')
+    item = get_object_or_404(Item, pk=pk)
+    item.date = request.POST.get('date')
+    item.name = request.POST.get('name')
+    item.amount = int(request.POST.get('amount'))
+    item.inout = request.POST.get('inout')
+    item.save()
 
     return JsonResponse({})
 
@@ -79,6 +93,7 @@ def data_for_graph(request):
         date=day, inout='収入') for day in days]
     out_data = [Item.objects.filter(
         date=day, inout='支出') for day in days]
+    print(in_data)
     # それぞれの日の和を取る
     in_data_sum = get_day_sum(in_data)
     out_data_sum = get_day_sum(out_data)

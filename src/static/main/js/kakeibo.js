@@ -40,6 +40,9 @@ $(function () {
 
     // 削除
     $(document).on('click', '.delete', function () {
+        if (!confirm('本当に削除しますか？')) {
+            return false;
+        };
         var self = $(this);
         $.ajax({
             url: 'main/delete_item/',
@@ -54,6 +57,96 @@ $(function () {
         });
     })
 
+    // 変更
+    $(document).on('click', '.edit', function (e) {
+        e.preventDefault();
+        var row = $(this).closest('tr');
+        row.find('.save').show();
+        row.find('.cancel').show();
+        row.find('.edit').hide();
+        row.find('.delete').hide();
+        
+        row.find('.row_data')
+            .attr('contenteditable', 'true')
+            .addClass('uk-background-muted')
+        
+        //--->add the original entry > start
+        row.find('.row_data').each(function (index, val) {
+            //this will help in case user decided to click on cancel button
+            $(this).attr('original_entry', $(this).html());
+        });
+        
+    });
+
+    // Cancel
+    $(document).on('click', '.cancel', function(e) {
+        e.preventDefault();
+
+        var row = $(this).closest('tr');
+
+        //hide save and cacel buttons
+        row.find('.save').hide();
+        row.find('.cancel').hide();
+
+        //show edit button
+        row.find('.edit').show();
+        row.find('.delete').show();
+
+        //make the whole row editable
+        row.find('.row_data')
+        .removeClass('uk-background-muted')
+
+        row.find('.row_data').each(function(index, val) 
+        {   
+            $(this).html( $(this).attr('original_entry') ); 
+        });  
+    });
+
+    // Save
+    $(document).on('click', '.save', function(e) {
+        e.preventDefault();
+        var row = $(this).closest('tr');
+        var pk = $(this).data('number')
+        
+        //hide save and cacel buttons
+        row.find('.save').hide();
+        row.find('.cancel').hide();
+
+        //show edit button
+        row.find('.edit').show();
+        row.find('.delete').show();
+
+
+        //make the whole row editable
+        row.find('.row_data')
+        .removeClass('uk-background-muted')
+
+        // get row data
+        var data = {}; 
+        row.find('.row_data').each(function(index, val) 
+        {   
+            var col_name = $(this).attr('col_name');  
+            var col_val  =  $(this).html();
+            data[col_name] = col_val;
+        });
+        var inout = $(row).attr('inout');
+        $.extend(data, {
+            pk: pk,
+            inout: inout
+        });
+
+        $.ajax({
+            url: 'main/edit_item/',
+            data: data,
+            type: 'POST',
+            dataType: 'JSON'
+        }).done(data => {
+            var month =  $('#select-month').val()
+            updateSum();
+            updateTable(month);
+            updateGraph(month);
+        })
+    });
 });
 
 function updateTable(month) {
@@ -83,12 +176,17 @@ function _updateTable(items, table) {
     };
     $(items).each(function (_, item) {
         $(tbody).append(
-            '<tr>' +
-            `<td>${item.date}</td>` +
-            `<td>${item.name}</td>` +
-            `<td class='${amountAttr}'>${item.amount}</td>` +
-            `<td><button class="uk-button uk-button-danger delete" data-number="${item.pk}">削除</button></td>` +
+            `<tr inout='${item.inout}'>` +
+            `<td class="row_data" col_name="date">${item.date}</td>` +
+            `<td class="row_data" col_name="name">${item.name}</td>` +
+            `<td class='${amountAttr} row_data' col_name="amount">${item.amount}</td>` +
+            `<td><button class="uk-button uk-button-default uk-margin-right edit" data-number="${item.pk}">変更</button>` +
+            `<button class="uk-button uk-button-default uk-margin-right cancel">キャンセル</button>` +
+            `<button class="uk-button uk-button-primary uk-margin-right save" data-number="${item.pk}">保存</button>` +
+            `<button class="uk-button uk-button-danger delete" data-number="${item.pk}">削除</button></td>` +
             '</tr>');
+        $(document).find('.save').hide();
+        $(document).find('.cancel').hide(); 
     })
 };
         
