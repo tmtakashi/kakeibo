@@ -7,100 +7,80 @@
 
 {% block content %}
 <link href="{% static 'main/css/kakeibo.css' %}" rel="stylesheet"></link>
-<nav class="uk-navbar-container uk-margin-bottom" uk-navbar>
-    <div class="uk-navbar-left">
-        <a class="uk-navbar-item uk-logo" href="#">Kakeibo</a>
-    </div>
-    <div class="uk-navbar-right">
-        <ul class="uk-navbar-nav">
-            <li>
-                <a href="#">
-                    <span class="uk-icon uk-margin-small-right" uk-icon="sign-in"></span>
-                    ログイン
-                </a>
-            </li>
-        </ul>
-    </div>
-</nav>
-<div class="uk-container">
-    <div class="uk-width-1-6@s" style='display: inline-block;'>
+<div class="uk-container uk-margin-top">
+    <div class="uk-width-1-4@s" style='display: inline-block;'>
         <input class="uk-input" type="month" id="select-month">
     </div>
     <span>の収支</span>
-    <div class="uk-margin-top uk-margin-auto" style="width:700px;">
-        <canvas id="chart"></canvas>
-    </div>
-    <div id="add-item">
-        <form id='form'>
-            {% csrf_token %}
-            <div class="uk-grid-small" uk-grid>
-                <div class="uk-width-1-5@s">
-                    <label for="date">日付</label>
-                    <input class="uk-input date" type="text" id="date" required>
+        <!-- Graph -->
+        <div class="uk-margin-auto" style="width:800px;">
+            <canvas id="chart"></canvas>
+        </div>
+        <div id="add-item">
+            <form id='form'>
+                {% csrf_token %}
+                <div class="uk-grid-small" uk-grid>
+                    <div class="uk-width-1-5@s">
+                        <label for="date">日付</label>
+                        <input class="uk-input date" type="text" id="date" required>
+                    </div>
+                    <div class="uk-width-1-5@s">
+                        <label for="item-name">項目名</label>
+                        <input class="uk-input" type="text" id="item-name" required>
+                    </div>
+                    <div class="uk-width-1-5@s">
+                        <label for="inout">収入・支出</label>
+                        <select class="uk-select" id="inout">
+                            <option>支出</option>
+                            <option>収入</option>
+                        </select>
+                    </div>
+                    <div class="uk-width-1-5@s">
+                        <label for="amount">金額（円）</label>
+                        <input class="uk-input" type="number" id="amount" pattern="[1-9][0-9]*" required>
+                    </div>
+                    <div class="uk-width-1-5@s">
+                        <button class="uk-button uk-button-primary uk-margin-top" id="add" type='submit'>追加</button>
+                    </div>
                 </div>
-                <div class="uk-width-1-5@s">
-                    <label for="item-name">項目名</label>
-                    <input class="uk-input" type="text" id="item-name" required>
-                </div>
-                <div class="uk-width-1-5@s">
-                    <label for="inout">収入・支出</label>
-                    <select class="uk-select" id="inout">
-                        <option>支出</option>
-                        <option>収入</option>
-                    </select>
-                </div>
-                <div class="uk-width-1-5@s">
-                    <label for="amount">金額（円）</label>
-                    <input class="uk-input" type="number" id="amount" pattern="[1-9][0-9]*" required>
-                </div>
-                <div class="uk-width-1-5@s">
-                    <button class="uk-button uk-button-primary uk-margin-top" id="add" type='submit'>追加</button>
-                </div>
-            </div>
-        </form>
-    </div>
-        <div class="uk-grid-small uk-margin-top" uk-grid>
-            <table class="uk-table uk-table-divider uk-table-justify uk-width-1-2" id='inTable'>
-            <caption class="uk-margin-bottom">今月の収入</caption>
-            <thead>
-                <tr>
-                    <th>日付</th>
-                    <th>項目名</th>
-                    <th>金額（円）</th>
-                    <th></th>
-                </tr>
-                </thead>
-                <tbody>
-                </tbody>
-                <tfoot>
-                    <td></td>
-                    <td>合計</td>
-                    <td id="in-sum">{{ in_tot }}</td>
-                    <td></td>
-                    <td></td>
-                </tfoot>
-        </table>
-        <table class="uk-table uk-table-divider uk-table-justify uk-width-1-2" id='outTable'>
-            <caption class="uk-margin-bottom">今月の支出</caption>
-            <thead>
-                <tr>
-                    <th>日付</th>
-                    <th>項目名</th>
-                    <th>金額（円）</th>
-                    <th></th>
-                </tr>
-                </thead>
-                <tbody>
-                </tbody>
-                <tfoot>
-                    <td></td>
-                    <td>合計</td>
-                    <td id="out-sum"></td>
-                    <td></td>
-                    <td></td>
-                </tfoot>
-        </table>
-    </div>
+            </form>
+        </div>
+        <ul uk-tab>
+            <li><a href="#">収入</a></li>
+            <li><a href="#">支出</a></li>
+        </ul>
+        <ul class="uk-switcher uk-margin">
+            <li>
+                <h4>合計 : <span id='in-sum'></span>円</h4>
+                <table class="uk-table uk-table-divider uk-table-justify" id='inTable'>
+                    <thead>
+                        <tr>
+                            <th>日付</th>
+                            <th>項目名</th>
+                            <th>金額（円）</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </li>
+            <li>
+                <h4>合計: <span id='out-sum'></span>円</h4>
+                <table class="uk-table uk-table-divider uk-table-justify" id='outTable'>
+                    <thead>
+                        <tr>
+                            <th>日付</th>
+                            <th>項目名</th>
+                            <th>金額（円）</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </li>
+        </ul>
 </div>
 {% endblock %}
 

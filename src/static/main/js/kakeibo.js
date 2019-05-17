@@ -59,7 +59,7 @@ $(function () {
 
     // 変更
     $(document).on('click', '.edit', function (e) {
-        e.preventDefault();
+        // e.preventDefault();
         var row = $(this).closest('tr');
         row.find('.save').show();
         row.find('.cancel').show();
@@ -75,6 +75,13 @@ $(function () {
             //this will help in case user decided to click on cancel button
             $(this).attr('original_entry', $(this).html());
         });
+
+        var dateCell = row.find('.row_data[col_name^=date]');
+        var date = $(dateCell).text();
+        $(dateCell).html(`<input class='uk-input' type='date' value='${date}'>`);
+
+        // 改行させない
+        $('td.row_data').keypress(function(e){ return e.which != 13; });
         
     });
 
@@ -94,6 +101,7 @@ $(function () {
 
         //make the whole row editable
         row.find('.row_data')
+        .attr('contenteditable', 'false')
         .removeClass('uk-background-muted')
 
         row.find('.row_data').each(function(index, val) 
@@ -117,9 +125,13 @@ $(function () {
         row.find('.delete').show();
 
 
-        //make the whole row editable
         row.find('.row_data')
+        .attr('contenteditable', 'false')
         .removeClass('uk-background-muted')
+        
+        var dateCell = row.find('.row_data[col_name^=date]');
+        var date = $(dateCell).find('input').val();
+        $(dateCell).text(date);
 
         // get row data
         var data = {}; 
