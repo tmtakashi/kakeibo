@@ -10,7 +10,8 @@ $(function () {
     updateGraph(ym);
 
     // 月変更
-    $('#select-month').on('change', function () {
+    $('#select-month').on('change', function (e) {
+        e.preventDefault();
         var self = $(this);
         updateTable(self.val());
         updateGraph(self.val());
@@ -25,6 +26,7 @@ $(function () {
         var data = {
             date: $('#date').val(),
             inout: $('#inout').val(),
+            category: $('#category').val(),
             itemName: $('#item-name').val(),
             amount: $('#amount').val()
         };
@@ -191,6 +193,7 @@ function _updateTable(items, table) {
             `<tr inout='${item.inout}'>` +
             `<td class="row_data" col_name="date">${item.date}</td>` +
             `<td class="row_data" col_name="name">${item.name}</td>` +
+            `<td class="row_data" col_name="category">${item.category}</td>` +
             `<td class='${amountAttr} row_data' col_name="amount">${item.amount}</td>` +
             `<td><button class="uk-button uk-button-default uk-margin-right edit" data-number="${item.pk}">変更</button>` +
             `<button class="uk-button uk-button-default uk-margin-right cancel">キャンセル</button>` +

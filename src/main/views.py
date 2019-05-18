@@ -13,6 +13,7 @@ from .models import Item
 class ItemMapper(Mapper):
     date = RawField('date')
     inout = RawField('inout')
+    category = RawField('category')
     name = RawField('name')
     amount = RawField('amount')
     pk = RawField('pk')
@@ -28,10 +29,12 @@ def add_item(request):
     date = request.POST.get('date')
     inout = request.POST.get('inout')
     name = request.POST.get('itemName')
+    category = request.POST.get('category')
     amount = request.POST.get('amount')
     item = Item.objects.create(
         date=date,
         inout=inout,
+        category=category,
         name=name,
         amount=amount
     )
@@ -39,6 +42,7 @@ def add_item(request):
     return JsonResponse({
         'date': date,
         'inout': inout,
+        'category': category,
         'name': name,
         'amount': amount
     })
@@ -61,6 +65,7 @@ def edit_item(request):
     item.name = request.POST.get('name')
     item.amount = int(request.POST.get('amount'))
     item.inout = request.POST.get('inout')
+    item.category = request.POST.get('category')
     item.save()
 
     return JsonResponse({})
@@ -93,7 +98,6 @@ def data_for_graph(request):
         date=day, inout='収入') for day in days]
     out_data = [Item.objects.filter(
         date=day, inout='支出') for day in days]
-    print(in_data)
     # それぞれの日の和を取る
     in_data_sum = get_day_sum(in_data)
     out_data_sum = get_day_sum(out_data)
