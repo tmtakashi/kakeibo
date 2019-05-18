@@ -263,6 +263,10 @@ function updateGraph(month) {
         },
         dataType: 'json'
     }).done(data => {
+        if (Object.keys(data).length == 0) {
+            window.pie.destroy(); 
+            return false;
+        }
         var barCtx = document.getElementById("bar-chart").getContext('2d');
         options = {
             scales: {
@@ -315,12 +319,15 @@ function updateGraph(month) {
             },
             dataType: 'JSON'
         }).done(response => {
+            if (Object.keys(response).length == 0) {
+                window.pie.destroy(); 
+                return false;
+            }
             var dataKeyVal = {
                 keys: Object.keys(response),
                 values: Object.values(response)
             }
             var pieCtx = document.getElementById("pie-chart").getContext('2d');
-
             if (window.pie != undefined) {
                 window.pie.destroy(); 
             };
