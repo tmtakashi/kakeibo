@@ -82,6 +82,23 @@ $(function () {
         var date = $(dateCell).text();
         $(dateCell).html(`<input class='uk-input' type='date' value='${date}'>`);
 
+        var categoryCell = row.find('.row_data[col_name^=category]');
+        var category = $(categoryCell).text();
+        $(categoryCell).html(`<select class="uk-select">` +
+        '<option>食費</option>' +
+        '<option>日用雑貨</option>' +
+        '<option>交通</option>' +
+        '<option>通信</option>' +
+        '<option>水道・光熱</option>' +
+        '<option>住まい</option>' +
+        '<option>交際費</option>' +
+        '<option>エンタメ</option>' +
+        '<option>教育・教養</option>' +
+        '<option>税金</option>' +
+        '<option>その他</option>' +
+            '</select>')
+        $(categoryCell).find('select').prop('selectedIndex', category2Index[category]);
+
         // 改行させない
         $('td.row_data').keypress(function(e){ return e.which != 13; });
         
@@ -134,6 +151,10 @@ $(function () {
         var dateCell = row.find('.row_data[col_name^=date]');
         var date = $(dateCell).find('input').val();
         $(dateCell).text(date);
+
+        var categoryCell = row.find('.row_data[col_name^=category]');
+        var category = $(categoryCell).find('select').val();
+        $(categoryCell).text(category);
 
         // get row data
         var data = {}; 
@@ -270,4 +291,18 @@ function updateGraph(month) {
             options: options
         });
     });
+}
+
+const category2Index = {
+    "食費": 0,
+    "日用雑貨": 1,
+    "交通": 2,
+    "通信": 3,
+    "水道・光熱": 4,
+    "住まい": 5,
+    "交際費": 6,
+    "エンタメ": 7,
+    "教育・教養": 8,
+    "税金": 9,
+    "その他": 10
 }
