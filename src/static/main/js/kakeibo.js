@@ -31,7 +31,7 @@ $(function () {
             amount: $('#amount').val()
         };
         $.ajax({
-            url: 'main/add_item/',
+            url: $('#add_item_url').text(),
             type: 'POST',
             data: data,
             dataType: 'json'
@@ -47,15 +47,17 @@ $(function () {
         };
         var self = $(this);
         $.ajax({
-            url: 'main/delete_item/',
+            url: $('#delete_item_url').text(),
             type: 'POST',
             data: {
                 pk: self.data('number')
             },
             dataType: 'json'
         }).done(response => {
+            var month =  $('#select-month').val()
             self.parent().parent().remove();
             updateSum();
+            updateGraph(month);
         });
     })
 
@@ -182,7 +184,7 @@ $(function () {
         });
 
         $.ajax({
-            url: 'main/edit_item/',
+            url: $('#edit_item').text(),
             data: data,
             type: 'POST',
             dataType: 'JSON'
@@ -197,7 +199,7 @@ $(function () {
 
 function updateTable(month) {
     $.ajax({
-        url: 'main/change_month/',
+        url: $('#change_month').text(),
         data: {
             month: month
         },
@@ -256,7 +258,7 @@ function updateSum() {
 function updateGraph(month) {
     // bar graph
     $.ajax({
-        url: 'main/data_for_bar_graph/',
+        url: $('#data_for_bar_graph').text(),
         type: 'POST',
         data: {
           month: month  
@@ -312,14 +314,14 @@ function updateGraph(month) {
 
         // Pie chart
         $.ajax({
-            url: 'main/data_for_pie_graph/',
+            url: $('#data_for_pie_graph').text(),
             type: 'POST',
             data: {
                 month: month
             },
             dataType: 'JSON'
         }).done(response => {
-            if (Object.keys(response).length == 0) {
+            if (window.pie && Object.keys(response).length == 0) {
                 window.pie.destroy(); 
                 return false;
             }

@@ -3,7 +3,7 @@ from django.contrib.auth import login
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import (
-    LoginView, LogoutView
+    LoginView
 )
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.signing import BadSignature, SignatureExpired, loads, dumps
@@ -24,11 +24,6 @@ class Login(LoginView):
     """ログインページ"""
     form_class = LoginForm
     template_name = 'users/login.html'
-
-
-class Logout(LoginRequiredMixin, LogoutView):
-    """ログアウトページ"""
-    template_name = 'register/top.html'
 
 
 class UserCreate(CreateView):

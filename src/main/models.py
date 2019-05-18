@@ -1,5 +1,8 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 
 class Item(models.Model):
@@ -22,6 +25,8 @@ class Item(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    user = models.ForeignKey(User, verbose_name='ユーザー',
+                             on_delete=models.CASCADE)
     date = models.DateField(verbose_name='日付', blank=False, null=False)
     category = models.CharField(
         choices=CATEGORY_CHOICES, default='食費', max_length=100)

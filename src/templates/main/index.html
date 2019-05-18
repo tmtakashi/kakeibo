@@ -7,11 +7,29 @@
 
 {% block content %}
 <link href="{% static 'main/css/kakeibo.css' %}" rel="stylesheet"></link>
+<!-- URLs for Ajax requests -->
+<div id="add_item_url" hidden>{% url 'main:add_item' %}</div>
+<div id="delete_item_url" hidden>{% url 'main:delete_item' %}</div>
+<div id="data_for_bar_graph" hidden>{% url 'main:data_for_bar_graph' %}</div>
+<div id="data_for_pie_graph" hidden>{% url 'main:data_for_pie_graph' %}</div>
+<div id="change_month" hidden>{% url 'main:change_month' %}</div>
+<div id="edit_item" hidden>{% url 'main:edit_item' %}</div>
+
 <div class="uk-container uk-margin-top">
-    <div class="uk-width-1-4@s" style='display: inline-block;'>
-        <input class="uk-input" type="month" id="select-month">
+    <div uk-grid>
+        <div class="uk-width-expand@m">
+            <div style='display: inline-block;'>
+                <input class="uk-input" type="month" id="select-month">
+            </div>
+            <span>の収支</span>
+        </div>
+        <div class="uk-width-1-5@m" style="float: right;">
+            {{ user.username }} さん
+        </div>
+        <div class="uk-width-1-6@m">
+            <a href="{% url 'users:logout' %}" class="uk-button uk-button-default">ログアウト</a>
+        </div>
     </div>
-    <span>の収支</span>
     <div class="uk-margin-top" uk-grid>
         <!-- Graph -->
         <div class="uk-width-auto@m uk-margin-right">
@@ -96,7 +114,7 @@
                 </table>
             </li>
             <li>
-                <h4>合計: <span id='out-sum'></span>円</h4>
+                <h4>合計 : <span id='out-sum'></span>円</h4>
                 <table class="uk-table uk-table-divider uk-table-justify" id='outTable'>
                     <thead>
                         <tr>

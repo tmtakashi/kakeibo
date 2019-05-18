@@ -16,11 +16,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
-from main.views import HomePageView
+from main.views import KakeiboView, login_redirect
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', HomePageView.as_view(), name='home'),
+    path('', KakeiboView.as_view(), name='home'),
     path('main/', include('main.urls', namespace='main')),
     path('users/', include('users.urls', namespace='users'))
 ]
