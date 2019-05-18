@@ -141,9 +141,13 @@ $(function () {
             var col_name = $(rowData[i]).attr('col_name');  
             var col_val = $(rowData[i]).html();
             if (!col_val) {
-                alert('空白にすることは出来ません。')
+                alert('空白にすることは出来ません。');
                 return false;
             };
+            if ($(rowData[i]).attr('col_name') == 'amount' && !$.isNumeric(col_val)) {
+                alert('金額の欄に数字を入力してください');
+                return false;
+            }
             data[col_name] = col_val;
         };
 
