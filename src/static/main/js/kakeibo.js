@@ -133,6 +133,20 @@ $(function () {
     $(document).on('click', '.save', function(e) {
         e.preventDefault();
         var row = $(this).closest('tr');
+        
+        // get row data
+        var data = {};
+        var rowData = row.find('.row_data');
+        for (i = 0; i < rowData.length; i++) {
+            var col_name = $(rowData[i]).attr('col_name');  
+            var col_val = $(rowData[i]).html();
+            if (!col_val) {
+                alert('空白にすることは出来ません。')
+                return false;
+            };
+            data[col_name] = col_val;
+        };
+
         var pk = $(this).data('number')
         
         //hide save and cacel buttons
@@ -143,27 +157,20 @@ $(function () {
         row.find('.edit').show();
         row.find('.delete').show();
 
-
         row.find('.row_data')
         .attr('contenteditable', 'false')
         .removeClass('uk-background-muted')
         
         var dateCell = row.find('.row_data[col_name^=date]');
         var date = $(dateCell).find('input').val();
+        data.date = date;
         $(dateCell).text(date);
 
         var categoryCell = row.find('.row_data[col_name^=category]');
         var category = $(categoryCell).find('select').val();
+        data.category = category;
         $(categoryCell).text(category);
-
-        // get row data
-        var data = {}; 
-        row.find('.row_data').each(function(index, val) 
-        {   
-            var col_name = $(this).attr('col_name');  
-            var col_val  =  $(this).html();
-            data[col_name] = col_val;
-        });
+        
         var inout = $(row).attr('inout');
         $.extend(data, {
             pk: pk,
@@ -175,7 +182,7 @@ $(function () {
             data: data,
             type: 'POST',
             dataType: 'JSON'
-        }).done(data => {
+        }).done(() => {
             var month =  $('#select-month').val()
             updateSum();
             updateTable(month);
