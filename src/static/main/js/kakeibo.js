@@ -254,15 +254,16 @@ function updateSum() {
 };
 
 function updateGraph(month) {
+    // bar graph
     $.ajax({
-        url: 'main/data_for_graph/',
+        url: 'main/data_for_bar_graph/',
         type: 'POST',
         data: {
           month: month  
         },
         dataType: 'json'
     }).done(data => {
-        var ctx = document.getElementById("chart").getContext('2d');
+        var barCtx = document.getElementById("bar-chart").getContext('2d');
         options = {
             scales: {
                 xAxes: [{
@@ -284,7 +285,10 @@ function updateGraph(month) {
                   ]
             }
         };
-        var myChart = new Chart(ctx, {
+        if (window.bar != undefined) {
+            window.bar.destroy(); 
+        }
+        window.bar = new Chart(barCtx, {
           type: 'bar',
           data: {
             labels: data.labels,
@@ -301,6 +305,48 @@ function updateGraph(month) {
             },
             options: options
         });
+
+        // Pie chart
+        $.ajax({
+            url: 'main/data_for_pie_graph/',
+            type: 'POST',
+            data: {
+                month: month
+            },
+            dataType: 'JSON'
+        }).done(response => {
+            var dataKeyVal = {
+                keys: Object.keys(response),
+                values: Object.values(response)
+            }
+            var pieCtx = document.getElementById("pie-chart").getContext('2d');
+
+            if (window.pie != undefined) {
+                window.pie.destroy(); 
+            };
+            window.pie = new Chart(pieCtx, {
+                type: 'pie',
+                data: {
+                    labels: dataKeyVal.keys,
+                    datasets: [{
+                    backgroundColor: [
+                        "#2ecc71",
+                        "#3498db",
+                        "#95a5a6",
+                        "#9b59b6",
+                        "#f1c40f",
+                        "#e74c3c",
+                        "#34495e",
+                        "#fbffc2",
+                        "#ffe1f8",
+                        "#090116",
+                        "#64792b"
+                    ],
+                    data: dataKeyVal.values
+                    }]
+                },
+        });
+        })
     });
 }
 

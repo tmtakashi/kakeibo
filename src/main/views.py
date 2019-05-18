@@ -88,7 +88,7 @@ def change_month(request):
 
 
 @require_POST
-def data_for_graph(request):
+def data_for_bar_graph(request):
     year, month = map(lambda x: int(x), request.POST.get('month').split('-'))
     num_days = calendar.monthrange(year, month)[1]
     days = [date(year, month, day) for day in range(1, num_days+1)]
@@ -109,6 +109,18 @@ def data_for_graph(request):
     })
 
 
+@require_POST
+def data_for_pie_graph(request):
+    year, month = map(lambda x: int(x), request.POST.get('month').split('-'))
+    num_days = calendar.monthrange(year, month)[1]
+    days = [date(year, month, day) for day in range(1, num_days+1)]
+    out_data = [Item.objects.filter(
+        date=day, inout='支出') for day in days]
+    category_sum = get_category_sum(out_data)
+
+    return JsonResponse(category_sum)
+
+
 def get_day_sum(queryset_list):
     sum_list = []
     for queryset in queryset_list:
@@ -120,3 +132,15 @@ def get_day_sum(queryset_list):
                 total += item.amount
         sum_list.append(total)
     return sum_list
+
+
+def get_category_sum(queryset_list):
+    category_sum = {}
+    for queryset in queryset_list:
+        for query in queryset:
+            if query.category not in category_sum:
+                category_sum[query.category] = query.amount
+            else:
+                category_sum[query.category] += query.amount
+
+    return category_sum
