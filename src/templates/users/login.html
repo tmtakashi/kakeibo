@@ -1,0 +1,26 @@
+{% extends 'users/base.html' %}
+
+{% block content %}
+<form method="POST">
+    <div class="uk-container">
+        <h2 class="uk-text-center uk-margin-top">Welcome to Kakeibo</h2>
+        <div class="uk-card uk-card-default uk-card-body uk-width-1-2@m uk-margin-auto uk-margin-top">
+            <h3 class="uk-card-title uk-text-center">ログイン</h3>
+                {{ form.non_field_errors }}
+                {% for field in form %}
+                    {{ field }}
+                    {{ field.errors }}
+                    <hr>
+                {% endfor %}
+                <div class="uk-text-center">
+                    <button type="submit" class="uk-button uk-button-primary" >ログイン</button>
+                </div>
+                <input type="hidden" name="next" value="{{ next }}" />
+                {% csrf_token %}
+                <div class="uk-text-center uk-margin-top">
+                    <a href="{% url 'users:sign_up' %}">会員登録はこちら</a>
+                </div>
+        </div>              
+    </div>
+</form>
+{% endblock %}

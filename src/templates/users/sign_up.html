@@ -1,0 +1,24 @@
+{% extends "users/base.html" %}
+{% block content %}
+<form action="" method="POST">
+    <div class="uk-container">
+        <div class="uk-text-center uk-margin-top">
+            <h2>会員登録</h2>
+        </div>
+        <div class="uk-card uk-card-default uk-card-body uk-width-1-2@m uk-margin-auto uk-margin-top">
+            {{ form.non_field_errors }}
+            {% for field in form %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label_tag }}</label>
+                {{ field }}
+                {{ field.errors }}
+            </div>
+            {% endfor %}
+            {% csrf_token %}
+            <div class="uk-margin-top uk-text-center">
+                <button type="submit" class="uk-button uk-button-primary">送信</button>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock %}
