@@ -14,6 +14,7 @@
 <div id="data_for_pie_graph" hidden>{% url 'main:data_for_pie_graph' %}</div>
 <div id="change_month" hidden>{% url 'main:change_month' %}</div>
 <div id="edit_item" hidden>{% url 'main:edit_item' %}</div>
+<div id="get_csv" hidden>{% url 'main:get_csv' %}</div>
 
 <div class="uk-container uk-margin-top">
     <div uk-grid>
@@ -92,6 +93,11 @@
             </form>
         </div>
     </div>
+    <div>
+        <div>
+            <button class="uk-button uk-button-default" id='download_csv'>CSVをダウンロード</button>
+            <a style="display:none;" id="downloader" href="#"></a>
+        </div>
         <ul uk-tab>
             <li><a href="#">収入</a></li>
             <li><a href="#">支出</a></li>
@@ -130,6 +136,7 @@
                 </table>
             </li>
         </ul>
+    </div>
 </div>
 {% endblock %}
 
