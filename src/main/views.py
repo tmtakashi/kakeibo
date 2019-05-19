@@ -1,8 +1,9 @@
 from datetime import datetime, date, timedelta
 import calendar
+import csv
 
 from django.shortcuts import render, get_object_or_404, reverse
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.views.generic import TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
@@ -131,6 +132,22 @@ def data_for_pie_graph(request):
     category_sum = get_category_sum(out_data)
 
     return JsonResponse(category_sum)
+
+
+@require_POST
+def get_csv(request):
+    user = request.user
+    year, month = map(lambda x: int(x), request.POST.get('month').split('-'))
+    items = Item.objects.filter(date__year=year,
+                                date__month=month, user=user).order_by('date')
+
+    table = [['日付', '項目名', 'カテゴリ', '収入・支出', '金額']]
+    for item in items:
+        table += [[item.date.strftime('%Y-%m-%d'), item.name,
+                   item.category, item.inout, item.amount]]
+    return JsonResponse({
+        'table': table
+    })
 
 
 def get_day_sum(queryset_list):

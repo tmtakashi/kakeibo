@@ -195,7 +195,18 @@ $(function () {
             updateGraph(month);
         })
     });
+
+    $('#download_csv').on('click', function () {
+        var month =  $('#select-month').val()
+        downloadCSV(month);
+    });
 });
+
+
+//////////////////////
+// HELPER FUNCTIONS///
+//////////////////////
+
 
 function updateTable(month) {
     $.ajax({
@@ -358,6 +369,33 @@ function updateGraph(month) {
         })
     });
 }
+
+function downloadCSV(month) {
+    $.ajax({
+        url: $('#get_csv').text(),
+        type: 'POST',
+        data: {
+            month: month
+        },
+        dataType: 'JSON'
+    }).done(data => {
+        var table = data.table;
+        // BOM の用意（文字化け対策）
+        var bom = new Uint8Array([0xEF, 0xBB, 0xBF]);
+        // CSV データの用意
+        var csv_data = table.map(function(l){return l.join(',')}).join('\r\n');
+
+        var blob = new Blob([bom, csv_data], { type: 'text/csv' });
+
+        var url = (window.URL || window.webkitURL).createObjectURL(blob);
+
+        var a = document.getElementById('downloader');
+        a.download = 'data.csv';
+        a.href = url;
+
+        $('#downloader')[0].click();
+    })
+};
 
 const category2Index = {
     "食費": 0,
