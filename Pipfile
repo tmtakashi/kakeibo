@@ -11,6 +11,7 @@ django = "*"
 bpmappers = "*"
 gunicorn = "==19.9.0"
 uwsgi = "*"
+django-environ = "*"
 
 [requires]
 python_version = "3.7"
