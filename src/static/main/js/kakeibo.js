@@ -390,7 +390,7 @@ function downloadCSV(month) {
         var url = (window.URL || window.webkitURL).createObjectURL(blob);
 
         var a = document.getElementById('downloader');
-        a.download = 'data.csv';
+        a.download = `${month}.csv`;
         a.href = url;
 
         $('#downloader')[0].click();
