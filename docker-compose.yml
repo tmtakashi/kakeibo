@@ -1,0 +1,26 @@
+version: '3.7'
+
+services:
+  nginx:
+      image: nginx:1.13
+      container_name: nginx
+      ports:
+        - "80:80"
+      volumes:
+        - ./nginx/conf:/etc/nginx/conf.d
+        - ./nginx/uwsgi_params:/etc/nginx/uwsgi_params
+        - ./src/static:/static
+        - ./nginx/log:/var/log/nginx
+      depends_on:
+        - web
+  web:
+    build: .
+    command: > 
+      bash -c "python /code/src/manage.py makemigrations &&
+      python /code/src/manage.py migrate --noinput &&
+      sudo uwsgi --ini /code/src/kakeibo/django.ini"
+    volumes:
+      - .:/code
+    ports:
+      - "8001"
+      - 8000:8000
