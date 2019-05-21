@@ -1,4 +1,4 @@
-./vscode/*
+vscode/
 kakeibo_heroku
 kakeibo_heroku.pub
 nginx/log/
