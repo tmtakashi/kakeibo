@@ -86,12 +86,12 @@ def change_month(request):
     user = request.user
     year, month = request.POST.get('month').split('-')
     in_items = Item.objects.filter(date__year=year,
-                                   date__month=month, user=user, inout='収入').order_by('-date').order_by('-created_at')
+                                   date__month=month, user=user, inout='収入').order_by('date')
     out_items = Item.objects.filter(date__year=year,
-                                    date__month=month, user=user, inout='支出').order_by('-date').order_by('-created_at')
+                                    date__month=month, user=user, inout='支出').order_by('date')
+
     in_items_dict = [ItemMapper(item).as_dict() for item in in_items]
     out_items_dict = [ItemMapper(item).as_dict() for item in out_items]
-
     return JsonResponse({
         'inItems': in_items_dict,
         'outItems': out_items_dict
